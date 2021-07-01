@@ -229,6 +229,8 @@ public class Calculator extends Application {
 
             }
         });
+
+        root.requestFocus();
         stage.setScene(scene);
         stage.show();
     }
