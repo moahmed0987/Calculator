@@ -16,6 +16,8 @@ import javafx.stage.Stage;
 public class Calculator extends Application {
 
     private final Font buttonFont = new Font(20);
+    private final String buttonBackgroundStyle = "-fx-background-color: #18191A;";
+    private final String buttonTextColourStyle = "-fx-text-fill:white;";
 
     private char operator;
     private double numberOne;
@@ -29,16 +31,18 @@ public class Calculator extends Application {
     public void start(Stage stage) {
         calcBox = new TextField();
         calcBox.setEditable(false);
-        calcBox.setPrefSize(260, 75);
+        calcBox.setMinSize(260, 80);
+        calcBox.setStyle(buttonBackgroundStyle + buttonTextColourStyle);
         calcBox.setAlignment(Pos.CENTER_RIGHT);
 
         equationDisplay = new TextField();
         equationDisplay.setEditable(false);
-        equationDisplay.setPrefSize(260, 25);
+        equationDisplay.setMinSize(260, 30);
+        equationDisplay.setStyle(buttonBackgroundStyle + buttonTextColourStyle);
         equationDisplay.setAlignment(Pos.CENTER_RIGHT);
 
-        calcBox.setFont(buttonFont);
-        equationDisplay.setFont(buttonFont);
+        calcBox.setFont(new Font(30));
+        equationDisplay.setFont(new Font(15));
 
         VBox textFieldHolder = new VBox();
         textFieldHolder.getChildren().addAll(equationDisplay, calcBox);
@@ -80,9 +84,10 @@ public class Calculator extends Application {
         numberButtons[9] = nineButton;
 
         for (Button button : numberButtons) {
-            button.setPrefSize(65, 65);
+            button.setMinSize(65, 65);
             button.setFont(buttonFont);
             button.setOnAction(e -> handleNumberPress(((Button) e.getSource()).getText()));
+            button.setStyle(buttonBackgroundStyle + buttonTextColourStyle);
         }
 
         Button addButton, subtractButton, multiplyButton, divideButton;
@@ -104,9 +109,10 @@ public class Calculator extends Application {
         functionButtons[3] = divideButton;
 
         for (Button button : functionButtons) {
-            button.setPrefSize(65, 65);
+            button.setMinSize(65, 65);
             button.setFont(buttonFont);
             button.setOnAction(e -> handleOperatorPress(((Button) e.getSource()).getText()));
+            button.setStyle(buttonBackgroundStyle + buttonTextColourStyle);
         }
 
         Button memoryAddButton, memorySubtractButton, memoryClearButton, memoryRecallButton;
@@ -128,21 +134,20 @@ public class Calculator extends Application {
         memoryButtons[3] = memoryRecallButton;
 
         for (Button button : memoryButtons) {
-            button.setPrefSize(65, 65);
+            button.setMinSize(65, 65);
             button.setFont(buttonFont);
+            button.setStyle(buttonBackgroundStyle + buttonTextColourStyle);
         }
 
         memoryAddButton.setOnAction(e -> {
             if (!calcBox.getText().isEmpty()) {
                 memory += Double.parseDouble(calcBox.getText());
-                System.out.println("memory = " + memory);
             }
         });
 
         memorySubtractButton.setOnAction(e -> {
             if (!calcBox.getText().isEmpty()) {
                 memory -= Double.parseDouble(calcBox.getText());
-                System.out.println("memory = " + memory);
             }
         });
 
@@ -175,15 +180,14 @@ public class Calculator extends Application {
         miscButtons[5] = backSpaceButton;
 
         for (Button button : miscButtons) {
-            button.setPrefSize(65, 65);
+            button.setMinSize(65, 65);
             button.setFont(buttonFont);
+            button.setStyle(buttonBackgroundStyle + buttonTextColourStyle);
         }
 
         equalsButton.setOnAction(e -> handleEqualsPress());
         decimalButton.setOnAction(e -> handleDecimalPress());
-        unaryMinusButton.setOnAction(e -> {
-            calcBox.setText(Double.toString(Double.parseDouble(calcBox.getText()) * -1));
-        });
+        unaryMinusButton.setOnAction(e -> handleUnaryMinusPress());
         clearButton.setOnAction(e -> handleClearPress());
         clearEntryButton.setOnAction(e -> calcBox.setText(""));
         backSpaceButton.setOnAction(e -> handleBackSpacePress());
@@ -194,15 +198,14 @@ public class Calculator extends Application {
         buttonHolder.getChildren().addAll(Arrays.asList(miscButtons));
         buttonHolder.getChildren().addAll(Arrays.asList(memoryButtons));
 
-        VBox root = new VBox();
+        VBox root = new VBox(10);
         root.setPadding(new Insets(20));
         root.getChildren().addAll(textFieldHolder, buttonHolder);
+        root.setStyle("-fx-background-color: #000000");
 
-        stage.setResizable(false);
         stage.setTitle("Calculator");
-        Scene scene = new Scene(root, 300, 500);
+        Scene scene = new Scene(root, 300, 550);
         scene.setOnKeyPressed(e -> {
-            System.out.println("Text = " + e.getText());
             if (e.getCode().isDigitKey()) {
                 handleNumberPress(e.getText());
             }
@@ -229,7 +232,6 @@ public class Calculator extends Application {
 
             }
         });
-
         root.requestFocus();
         stage.setScene(scene);
         stage.show();
@@ -285,6 +287,12 @@ public class Calculator extends Application {
             if (!calcBox.getText().contains(".")) {
                 calcBox.setText(calcBox.getText().concat("."));
             }
+        }
+    }
+
+    private void handleUnaryMinusPress() {
+        if (!calcBox.getText().isEmpty()) {
+            calcBox.setText(Double.toString(Double.parseDouble(calcBox.getText()) * -1));
         }
     }
 
